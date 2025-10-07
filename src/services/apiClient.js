@@ -11,7 +11,7 @@ export const api = {
 // === Auth endpoints ===
 export const AuthApi = {
     login: (payload) => api.post('/auth/login', payload),
-    me: () => api.get('/auth/me'), // /auth/me kamu sudah selalu 200
+    me: () => api.get('/auth/me'),
     logout: () => api.post('/auth/logout'),
 };
 

@@ -11,6 +11,10 @@ export default function Header() {
         nav('/login', { replace: true });
     };
 
+    const goToProfile = () => {
+        nav('/profile');
+    };
+
     return (
         <header className="topbar">
             <div
@@ -21,11 +25,8 @@ export default function Header() {
                     alignItems: 'center',
                 }}
             >
-                <h1>
-                    App Management Guru
-                    {/* <small>— modular UI</small> */}
-                </h1>
-                {user ? (
+                <h1>App Management Guru</h1>
+                {user && (
                     <div
                         style={{
                             display: 'flex',
@@ -33,17 +34,31 @@ export default function Header() {
                             alignItems: 'center',
                         }}
                     >
-                        <span className="pill" style={{ color: 'black' }}>
-                            {user.role}
-                        </span>
+                        {/* 👇 Klik nama untuk ke halaman Profile */}
+                        <button
+                            onClick={goToProfile}
+                            className="pill"
+                            style={{
+                                color: 'black',
+                                background: 'white',
+                                border: 'none',
+                                borderRadius: '16px',
+                                padding: '6px 12px',
+                                cursor: 'pointer',
+                                fontWeight: 600,
+                            }}
+                        >
+                            {user.full_name || user.username}
+                        </button>
+
                         <span className="muted" style={{ color: '#fff' }}>
-                            {user.email}
+                            {user.username}
                         </span>
                         <button className="btn" onClick={onLogout}>
                             Logout
                         </button>
                     </div>
-                ) : null}
+                )}
             </div>
         </header>
     );

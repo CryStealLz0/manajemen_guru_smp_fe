@@ -1,4 +1,3 @@
-// src/pages/LoginPage.jsx
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../app/auth/AuthProvider';
@@ -21,19 +20,24 @@ export default function LoginPage() {
 
     const onChange = (key) => (e) => {
         setForm((s) => ({ ...s, [key]: e.target.value }));
-        setFieldErrs((s) => ({ ...s, [key]: undefined })); // clear error per field
+        setFieldErrs((s) => ({ ...s, [key]: undefined }));
         setErr('');
     };
     const onBlur = (key) => () => setTouched((s) => ({ ...s, [key]: true }));
 
-    // Validasi lokal (required)
+    // 🔹 Validasi lokal minimal
     const localRequiredErrors = React.useMemo(() => {
         const errs = {};
-        const show = (k) => touched[k] || submitted; // tampilkan setelah blur atau setelah submit
+        const show = (k) => touched[k] || submitted;
+
         if (show('username') && !form.username.trim())
             errs.username = 'Username wajib diisi';
+
         if (show('password') && !form.password)
             errs.password = 'Password wajib diisi';
+        else if (show('password') && form.password.length < 6)
+            errs.password = 'Password minimal 6 karakter';
+
         return errs;
     }, [form, touched, submitted]);
 
@@ -43,18 +47,23 @@ export default function LoginPage() {
         e.preventDefault();
         setSubmitted(true);
         setErr('');
-        // cek required lokal dulu
+
+        // 🔸 Cek validasi lokal
         const reqErrs = {};
         if (!form.username.trim()) reqErrs.username = 'Username wajib diisi';
         if (!form.password) reqErrs.password = 'Password wajib diisi';
+        else if (form.password.length < 6)
+            reqErrs.password = 'Password minimal 6 karakter';
+
         if (Object.keys(reqErrs).length) {
-            setFieldErrs((s) => ({ ...s, ...reqErrs }));
-            return; // stop, jangan panggil API
+            setFieldErrs(reqErrs);
+            return;
         }
 
         setLoading(true);
         try {
             const { role } = await login(form.username.trim(), form.password);
+
             if (from && from !== '/login') {
                 nav(from, { replace: true });
             } else {
@@ -63,9 +72,17 @@ export default function LoginPage() {
                 });
             }
         } catch (error) {
-            setErr(error.message || 'Gagal login');
-            if (error.fieldErrors && typeof error.fieldErrors === 'object') {
-                setFieldErrs(error.fieldErrors); // error 422 dari backend
+            // 🔹 Tangani error sesuai format backend
+            console.warn('Login error:', error);
+
+            // backend format: { ok:false, msg:'...', errors:{ username:'...', password:'...' } }
+            if (error.errors && typeof error.errors === 'object') {
+                setFieldErrs(error.errors);
+            } else if (error.message) {
+                // fallback umum
+                setErr(error.message);
+            } else {
+                setErr('Gagal login, coba lagi.');
             }
         } finally {
             setLoading(false);
@@ -89,6 +106,7 @@ export default function LoginPage() {
                 <h3 style={{ marginBottom: 16 }}>Masuk</h3>
 
                 <form onSubmit={onSubmit} noValidate>
+                    {/* Username */}
                     <div style={{ marginBottom: 12 }}>
                         <label
                             htmlFor="login-username"
@@ -117,6 +135,7 @@ export default function LoginPage() {
                         )}
                     </div>
 
+                    {/* Password */}
                     <div style={{ marginBottom: 12 }}>
                         <label
                             htmlFor="login-password"
@@ -143,6 +162,7 @@ export default function LoginPage() {
                         )}
                     </div>
 
+                    {/* Error global */}
                     {err && (
                         <p
                             style={{

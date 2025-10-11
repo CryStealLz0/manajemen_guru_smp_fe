@@ -11,6 +11,7 @@ Jalankan perintah berikut di terminal untuk meng-install semua package yang dibu
 ```bash
 npm install
 ```
+---
 
 # 🛠️ 2. Konfigurasi Database
 
@@ -19,6 +20,8 @@ npm install
    - Ubah nilai BASE agar sesuai dengan port Backend (BE) kamu.
    - Atau gunakan file .env untuk menyimpannya secara aman.
 
+---
+
 # 🧱 3. Konfigurasi .env
 
 1. Buka atau buat file .env di root proyek.
@@ -26,13 +29,23 @@ npm install
 
 Catatan: Sesuaikan port (5000) dengan port backend yang kamu gunakan.
 
+---
+
 # ▶️ 4. Menjalankan Proyek
 
-Setelah semua konfigurasi selesai, jalankan proyek dengan perintah berikut: npm run dev (Bisa di cek di package.json)
+Setelah semua konfigurasi selesai, jalankan proyek dengan perintah berikut:  
+```bash
+npm run dev
+```
+(Bisa di cek di package.json untuk konfigurasinya)
+
+---
 
 # ✅ Selesai!
 
 Proyek sekarang siap dijalankan dan diuji di lingkungan lokal kamu.
+
+---
 
 # 📌 Catatan Tambahan
 

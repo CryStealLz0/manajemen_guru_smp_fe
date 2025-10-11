@@ -1,12 +1,41 @@
-# React + Vite
+# 📦 Project Setup Guide
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Panduan lengkap untuk menjalankan proyek ini di lingkungan lokal.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🔧 1. Install Dependencies
 
-## Expanding the ESLint configuration
+Jalankan perintah berikut di terminal untuk meng-install semua package yang dibutuhkan:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+npm install
+```
+
+# 🛠️ 2. Konfigurasi Database
+
+1. Buka file services/apiFetch.js.
+2. Sesuaikan pengaturannya dengan environment lokal kamu:
+   - Ubah nilai BASE agar sesuai dengan port Backend (BE) kamu.
+   - Atau gunakan file .env untuk menyimpannya secara aman.
+
+# 🧱 3. Konfigurasi .env
+
+1. Buka atau buat file .env di root proyek.
+2. Tambahkan konfigurasi berikut: VITE_API_BASE=http://localhost:5000
+
+Catatan: Sesuaikan port (5000) dengan port backend yang kamu gunakan.
+
+# ▶️ 4. Menjalankan Proyek
+
+Setelah semua konfigurasi selesai, jalankan proyek dengan perintah berikut: npm run dev (Bisa di cek di package.json)
+
+# ✅ Selesai!
+
+Proyek sekarang siap dijalankan dan diuji di lingkungan lokal kamu.
+
+# 📌 Catatan Tambahan
+
+- Pastikan server/backend sudah berjalan sebelum menjalankan frontend.
+- Jika menggunakan file .env, pastikan file tersebut sudah diisi dan disimpan dengan benar.
+- Jika terjadi error koneksi, periksa kembali pengaturan port dan URL pada .env serta file apiFetch.js.

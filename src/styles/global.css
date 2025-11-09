@@ -1,196 +1,196 @@
 :root {
-    --bg: #f7f7fb;
-    --card: #fff;
-    --primary: #2563eb;
-    --muted: #6b7280;
-    --line: #e5e7eb;
-    --ok: #16a34a;
-    --warn: #f59e0b;
-    --err: #ef4444;
-    --ink: #0f172a;
-    --ink-2: #cbd5e1;
+  --bg: #f7f7fb;
+  --card: #fff;
+  --primary: #2563eb;
+  --muted: #6b7280;
+  --line: #e5e7eb;
+  --ok: #16a34a;
+  --warn: #f59e0b;
+  --err: #ef4444;
+  --ink: #0f172a;
+  --ink-2: #cbd5e1;
 }
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 html,
 body,
 #root {
-    height: 100%;
+  height: 100%;
 }
 body {
-    margin: 0;
-    font: 14px/1.5 system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue',
-        Arial, 'Noto Sans', 'Liberation Sans';
-    background: var(--bg);
+  margin: 0;
+  font: 14px/1.5 system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue',
+    Arial, 'Noto Sans', 'Liberation Sans';
+  background: var(--bg);
 }
 .container {
-    max-width: 1100px;
-    margin: 20px auto;
-    padding: 0 12px;
+  max-width: 1100px;
+  margin: 20px auto;
+  padding: 0 12px;
 }
 .grid {
-    display: grid;
-    gap: 12px;
+  display: grid;
+  gap: 12px;
 }
 .grid.cols-2 {
-    grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
 }
 .grid.cols-3 {
-    grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, 1fr);
 }
 .row {
-    display: flex;
-    gap: 8px;
+  display: flex;
+  gap: 8px;
 }
 .row > * {
-    flex: 1;
+  flex: 1;
 }
 .hidden {
-    display: none;
+  display: none;
 }
 .topbar {
-    background: var(--ink);
-    color: #fff;
-    padding: 16px 20px;
+  background: var(--ink);
+  color: #fff;
+  padding: 16px 20px;
 }
 .topbar h1 {
-    margin: 0;
-    font-size: 18px;
+  margin: 0;
+  font-size: 18px;
 }
 .topbar small {
-    color: var(--ink-2);
+  color: var(--ink-2);
 }
 .divider {
-    height: 1px;
-    background: var(--line);
-    margin: 10px 0;
+  height: 1px;
+  background: var(--line);
+  margin: 10px 0;
 }
 .notice {
-    background: #eef2ff;
-    border: 1px solid #c7d2fe;
-    color: #334155;
-    padding: 8px 10px;
-    border-radius: 8px;
-    font-size: 13px;
+  background: #eef2ff;
+  border: 1px solid #c7d2fe;
+  color: #334155;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 13px;
 }
 .muted {
-    color: var(--muted);
-    font-size: 12px;
+  color: var(--muted);
+  font-size: 12px;
 }
 .kbd {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-        'Liberation Mono', 'Courier New', monospace;
-    background: #eef2ff;
-    border: 1px solid #c7d2fe;
-    border-radius: 6px;
-    padding: 1px 6px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    'Liberation Mono', 'Courier New', monospace;
+  background: #eef2ff;
+  border: 1px solid #c7d2fe;
+  border-radius: 6px;
+  padding: 1px 6px;
 }
 
 /* place in globals.css (append) */
 .card {
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 14px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px;
 }
 .card h3 {
-    margin: 0 0 8px;
-    font-size: 15px;
+  margin: 0 0 8px;
+  font-size: 15px;
 }
 .actions {
-    display: flex;
-    gap: 8px;
-    margin-top: 10px;
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
 }
 .btn {
-    padding: 8px 12px;
-    border-radius: 8px;
-    border: 1px solid var(--line);
-    background: #fff;
-    cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: #fff;
+  cursor: pointer;
 }
 .btn.primary {
-    background: var(--primary);
-    color: #fff;
-    border-color: var(--primary);
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
 }
 .btn.ghost {
-    background: #fff;
+  background: #fff;
 }
 .btn.success {
-    background: var(--ok);
-    color: #fff;
-    border-color: var(--ok);
+  background: var(--ok);
+  color: #fff;
+  border-color: var(--ok);
 }
 .btn.warn {
-    background: var(--warn);
-    color: #fff;
-    border-color: var(--warn);
+  background: var(--warn);
+  color: #fff;
+  border-color: var(--warn);
 }
 label {
-    display: block;
-    font-weight: 600;
-    margin: 8px 0 4px;
+  display: block;
+  font-weight: 600;
+  margin: 8px 0 4px;
 }
 input,
 select,
 textarea {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    background: #fff;
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
 }
 textarea {
-    min-height: 70px;
+  min-height: 70px;
 }
 .table-wrap {
-    overflow: auto;
-    border: 1px solid var(--line);
-    border-radius: 10px;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 10px;
 }
 table {
-    width: 100%;
-    border-collapse: collapse;
-    background: #fff;
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
 }
 th,
 td {
-    padding: 10px;
-    border-bottom: 1px solid var(--line);
-    text-align: left;
-    white-space: nowrap;
+  padding: 10px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  white-space: nowrap;
 }
 th {
-    background: #f3f4f6;
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.02em;
+  background: #f3f4f6;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 .pill {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 999px;
-    border: 1px solid var(--line);
-    font-size: 12px;
-    background: #f9fafb;
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  font-size: 12px;
+  background: #f9fafb;
 }
 .tabs {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 16px;
-    flex-wrap: wrap;
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
 }
 .tab-btn {
-    padding: 8px 12px;
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    background: #fff;
-    cursor: pointer;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
 }
 .tab-btn.active {
-    background: var(--primary);
-    color: #fff;
-    border-color: var(--primary);
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
 }

@@ -54,7 +54,7 @@ export default function Header() {
                         <span className="muted" style={{ color: '#fff' }}>
                             {user.username}
                         </span>
-                        <button className="btn" onClick={onLogout}>
+                        <button className="btn " onClick={onLogout}>
                             Logout
                         </button>
                     </div>

@@ -2,6 +2,7 @@ import React from 'react';
 import Card from '../../../../components/ui/Card';
 import { Button } from '../../../../components/ui/Button';
 import { Field, Row } from '../../../../components/ui/Form';
+import ConfirmModal from '../../../../components/ui/ConfirmModal';
 
 export default function ClassForm({ teachers = [], onSubmit }) {
     const [form, setForm] = React.useState({
@@ -10,9 +11,22 @@ export default function ClassForm({ teachers = [], onSubmit }) {
         name: '',
         homeroomId: '',
     });
+    const [showModal, setShowModal] = React.useState(false);
+
     const set = (k) => (e) => setForm((s) => ({ ...s, [k]: e.target.value }));
     const submit = async () => {
-        await onSubmit?.(form);
+        if (!form.name.trim()) {
+            setShowModal(true);
+            return;
+        }
+
+        const payload = {
+            grade_level: form.grade,
+            section: form.section,
+            name: form.name,
+            homeroom_teacher_id: form.homeroomId ? Number(form.homeroomId) : null,
+        };
+        await onSubmit?.(payload);
         setForm({ grade: 'VII', section: 'A', name: '', homeroomId: '' });
     };
 
@@ -69,6 +83,16 @@ export default function ClassForm({ teachers = [], onSubmit }) {
                     Reset
                 </Button>
             </div>
+
+            <ConfirmModal
+                open={showModal}
+                title="Validasi Input"
+                onClose={() => setShowModal(false)}
+                onConfirm={() => setShowModal(false)}
+                confirmText="OK"
+            >
+                Nama Kelas wajib diisi.
+            </ConfirmModal>
         </Card>
     );
 }

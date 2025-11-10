@@ -3,49 +3,148 @@ import Card from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
 import { Field, Row } from '../../../components/ui/Form';
 import { Table } from '../../../components/ui/Table';
+import { AdminApi } from '../../../services/apiClient';
+import ConfirmModal from '../../../components/ui/ConfirmModal';
+import { useToast } from '../../../components/ui/ToastContext';
+
+const days = [
+    { id: 1, name: 'Senin' },
+    { id: 2, name: 'Selasa' },
+    { id: 3, name: 'Rabu' },
+    { id: 4, name: 'Kamis' },
+    { id: 5, name: 'Jumat' },
+    { id: 6, name: 'Sabtu' },
+    { id: 7, name: 'Minggu' },
+];
 
 export default function SchedulePage() {
-    const [filters, setFilters] = React.useState({
-        semester: '2025/2026 - Ganjil',
-        day: '1',
-        classId: 'VII A',
-        period: 'JP-1 (07:00-07:40)',
-        subject: 'Matematika',
-        teacher: 'Pak Budi',
-        room: '',
-        note: '',
+    // Data for dropdowns
+    const [semesters, setSemesters] = React.useState([]);
+    const [classes, setClasses] = React.useState([]);
+    const [periods, setPeriods] = React.useState([]);
+    const [subjects, setSubjects] = React.useState([]);
+    const [teachers, setTeachers] = React.useState([]);
+    const [rooms, setRooms] = React.useState([]);
+
+    // Form state
+    const [form, setForm] = React.useState({
+        semester_id: '',
+        day_of_week: '1',
+        class_id: '',
+        period_id: '',
+        subject_id: '',
+        teacher_id: '',
+        room_id: '',
+        notes: '',
     });
 
-    const rows = [
-        {
-            id: 's1',
-            jp: 'JP-1',
-            time: '07:00–07:40',
-            kelas: 'VII A',
-            mapel: 'Matematika',
-            guru: 'Pak Budi',
-            ruang: 'R. 7A',
-            catatan: '-',
-        },
-        {
-            id: 's2',
-            jp: 'JP-2',
-            time: '07:40–08:20',
-            kelas: 'VII A',
-            mapel: 'Bahasa Indonesia',
-            guru: 'Bu Sari',
-            ruang: '-',
-            catatan: 'Ulangan',
-        },
-    ];
+    // Table state
+    const [timetable, setTimetable] = React.useState([]);
+    const [loading, setLoading] = React.useState(true);
+
+    // UI state
+    const [modal, setModal] = React.useState({ isOpen: false, message: '' });
+    const toast = useToast();
+
+    const setF = (k) => (e) => setForm((s) => ({ ...s, [k]: e.target.value }));
+
+    // Fetch initial data for dropdowns
+    React.useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [
+                    semestersRes,
+                    classesRes,
+                    periodsRes,
+                    subjectsRes,
+                    teachersRes,
+                    roomsRes,
+                ] = await Promise.all([
+                    AdminApi.getSemesters(),
+                    AdminApi.getClasses(),
+                    AdminApi.getPeriods(),
+                    AdminApi.getSubjects(),
+                    AdminApi.getUsers({ role: 'teacher' }),
+                    AdminApi.getRooms(),
+                ]);
+                setSemesters(semestersRes.data);
+                setClasses(classesRes.data);
+                setPeriods(periodsRes.data);
+                setSubjects(subjectsRes.data);
+                setTeachers(teachersRes.data);
+                setRooms(roomsRes.data);
+
+                // Set initial form values
+                if (semestersRes.data.length > 0) setForm(s => ({ ...s, semester_id: semestersRes.data[0].id }));
+                if (classesRes.data.length > 0) setForm(s => ({ ...s, class_id: classesRes.data[0].id }));
+
+            } catch (error) {
+                toast?.error(error.message);
+            }
+        };
+        fetchData();
+    }, [toast]);
+
+    // Fetch timetable data when filters change
+    React.useEffect(() => {
+        const fetchTimetable = async () => {
+            if (!form.semester_id || !form.day_of_week || !form.class_id) {
+                setTimetable([]);
+                return;
+            }
+            setLoading(true);
+            try {
+                const res = await AdminApi.getTimetables({
+                    semester_id: form.semester_id,
+                    day_of_week: form.day_of_week,
+                    class_id: form.class_id,
+                });
+                if (res.ok) {
+                    setTimetable(res.data);
+                }
+            } catch (error) {
+                toast?.error(error.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchTimetable();
+    }, [form.semester_id, form.day_of_week, form.class_id, toast]);
+
+    const submit = async () => {
+        const { semester_id, day_of_week, class_id, period_id, subject_id, teacher_id } = form;
+        if (!semester_id || !day_of_week || !class_id || !period_id || !subject_id || !teacher_id) {
+            setModal({ isOpen: true, message: 'Semua field wajib diisi, kecuali Ruang dan Catatan.' });
+            return;
+        }
+
+        try {
+            await AdminApi.createTimetable({
+                ...form,
+                room_id: form.room_id || null,
+            });
+            toast?.success('Jadwal berhasil disimpan');
+            // Refetch timetable
+            const res = await AdminApi.getTimetables({
+                semester_id: form.semester_id,
+                day_of_week: form.day_of_week,
+                class_id: form.class_id,
+            });
+            if (res.ok) {
+                setTimetable(res.data);
+            }
+        } catch (error) {
+            toast?.error(error.message);
+        }
+    };
+
     const cols = [
-        { header: 'JP', key: 'jp' },
-        { header: 'Waktu', key: 'time' },
-        { header: 'Kelas', key: 'kelas' },
-        { header: 'Mapel', key: 'mapel' },
-        { header: 'Guru', key: 'guru' },
-        { header: 'Ruang', key: 'ruang' },
-        { header: 'Catatan', key: 'catatan' },
+        { header: 'JP', key: 'period.title' },
+        { header: 'Waktu', key: 'period.start_time', render: (row) => `${row.period.start_time} - ${row.period.end_time}` },
+        { header: 'Mapel', key: 'subject.name' },
+        { header: 'Guru', key: 'teacher.full_name' },
+        { header: 'Ruang', key: 'room.name' },
+        { header: 'Catatan', key: 'notes' },
     ];
 
     return (
@@ -53,131 +152,62 @@ export default function SchedulePage() {
             <Card title="Susun Jadwal (Create Timetable)">
                 <Row>
                     <Field label="Semester">
-                        <select
-                            value={filters.semester}
-                            onChange={(e) =>
-                                setFilters((s) => ({
-                                    ...s,
-                                    semester: e.target.value,
-                                }))
-                            }
-                        >
-                            <option>2025/2026 - Ganjil</option>
-                            <option>2025/2026 - Genap</option>
+                        <select value={form.semester_id} onChange={setF('semester_id')}>
+                            {semesters.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
                         </select>
                     </Field>
                     <Field label="Hari">
-                        <select
-                            value={filters.day}
-                            onChange={(e) =>
-                                setFilters((s) => ({
-                                    ...s,
-                                    day: e.target.value,
-                                }))
-                            }
-                        >
-                            <option value="1">Senin</option>
-                            <option value="2">Selasa</option>
-                            <option value="3">Rabu</option>
-                            <option value="4">Kamis</option>
-                            <option value="5">Jumat</option>
-                            <option value="6">Sabtu</option>
+                        <select value={form.day_of_week} onChange={setF('day_of_week')}>
+                            {days.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
                         </select>
                     </Field>
                     <Field label="Kelas">
-                        <select
-                            value={filters.classId}
-                            onChange={(e) =>
-                                setFilters((s) => ({
-                                    ...s,
-                                    classId: e.target.value,
-                                }))
-                            }
-                        >
-                            <option>VII A</option>
-                            <option>VII B</option>
+                        <select value={form.class_id} onChange={setF('class_id')}>
+                            {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                         </select>
                     </Field>
                 </Row>
 
                 <Row>
                     <Field label="Period (JP)">
-                        <select
-                            value={filters.period}
-                            onChange={(e) =>
-                                setFilters((s) => ({
-                                    ...s,
-                                    period: e.target.value,
-                                }))
-                            }
-                        >
-                            <option>JP-1 (07:00-07:40)</option>
-                            <option>JP-2 (07:40-08:20)</option>
+                        <select value={form.period_id} onChange={setF('period_id')}>
+                            <option value="">— pilih JP —</option>
+                            {periods.map(p => <option key={p.id} value={p.id}>{p.title} ({p.start_time}-{p.end_time})</option>)}
                         </select>
                     </Field>
                     <Field label="Mata Pelajaran">
-                        <select
-                            value={filters.subject}
-                            onChange={(e) =>
-                                setFilters((s) => ({
-                                    ...s,
-                                    subject: e.target.value,
-                                }))
-                            }
-                        >
-                            <option>Matematika</option>
-                            <option>Bahasa Indonesia</option>
+                        <select value={form.subject_id} onChange={setF('subject_id')}>
+                            <option value="">— pilih mapel —</option>
+                            {subjects.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
                         </select>
                     </Field>
                     <Field label="Guru">
-                        <select
-                            value={filters.teacher}
-                            onChange={(e) =>
-                                setFilters((s) => ({
-                                    ...s,
-                                    teacher: e.target.value,
-                                }))
-                            }
-                        >
-                            <option>Pak Budi</option>
-                            <option>Bu Sari</option>
+                        <select value={form.teacher_id} onChange={setF('teacher_id')}>
+                            <option value="">— pilih guru —</option>
+                            {teachers.map(t => <option key={t.id} value={t.id}>{t.full_name}</option>)}
                         </select>
                     </Field>
                 </Row>
 
                 <Row>
                     <Field label="Ruang (opsional)">
-                        <select
-                            value={filters.room}
-                            onChange={(e) =>
-                                setFilters((s) => ({
-                                    ...s,
-                                    room: e.target.value,
-                                }))
-                            }
-                        >
-                            <option value="">—</option>
-                            <option>R. 7A</option>
-                            <option>Lab IPA</option>
+                        <select value={form.room_id} onChange={setF('room_id')}>
+                            <option value="">— pilih ruang —</option>
+                            {rooms.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
                         </select>
                     </Field>
                     <Field label="Catatan (opsional)">
                         <input
-                            value={filters.note}
-                            onChange={(e) =>
-                                setFilters((s) => ({
-                                    ...s,
-                                    note: e.target.value,
-                                }))
-                            }
+                            value={form.notes}
+                            onChange={setF('notes')}
                             placeholder="Ulangan harian / pindah ruang / guru pengganti…"
                         />
                     </Field>
                 </Row>
 
                 <div className="actions">
-                    <Button variant="success">Simpan Jadwal</Button>
-                    <Button variant="ghost">Reset</Button>
+                    <Button variant="success" onClick={submit}>Simpan Jadwal</Button>
+                    <Button variant="ghost" onClick={() => setForm(s => ({ ...s, period_id: '', subject_id: '', teacher_id: '', room_id: '', notes: '' }))}>Reset</Button>
                 </div>
 
                 <div className="notice" style={{ marginTop: 10 }}>
@@ -190,12 +220,12 @@ export default function SchedulePage() {
                 <Row>
                     <Field label="Dari Semester">
                         <select>
-                            <option>2025/2026 - Ganjil</option>
+                            {semesters.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
                         </select>
                     </Field>
                     <Field label="Ke Semester">
                         <select>
-                            <option>2025/2026 - Genap</option>
+                            {semesters.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
                         </select>
                     </Field>
                 </Row>
@@ -211,7 +241,7 @@ export default function SchedulePage() {
                 <Row>
                     <Field label="Semester">
                         <select>
-                            <option>2025/2026 - Genap</option>
+                            {semesters.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
                         </select>
                     </Field>
                     <div className="actions" style={{ alignItems: 'end' }}>
@@ -225,7 +255,8 @@ export default function SchedulePage() {
             <Card title="Ringkasan Jadwal (Hari terpilih)">
                 <Table
                     columns={cols}
-                    rows={rows}
+                    rows={timetable}
+                    loading={loading}
                     renderActions={() => (
                         <>
                             <Button>Edit</Button>{' '}
@@ -237,6 +268,15 @@ export default function SchedulePage() {
                     Filter atas menentukan isi tabel ini.
                 </p>
             </Card>
+            <ConfirmModal
+                open={modal.isOpen}
+                title="Validasi Input"
+                onClose={() => setModal({ isOpen: false, message: '' })}
+                onConfirm={() => setModal({ isOpen: false, message: '' })}
+                confirmText="OK"
+            >
+                {modal.message}
+            </ConfirmModal>
         </div>
     );
 }

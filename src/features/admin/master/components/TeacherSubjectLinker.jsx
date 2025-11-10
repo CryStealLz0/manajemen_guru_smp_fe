@@ -2,6 +2,7 @@ import React from 'react';
 import Card from '../../../../components/ui/Card';
 import { Button } from '../../../../components/ui/Button';
 import { Field, Row } from '../../../../components/ui/Form';
+import ConfirmModal from '../../../../components/ui/ConfirmModal';
 
 export default function TeacherSubjectLinker({
     teachers = [],
@@ -9,9 +10,19 @@ export default function TeacherSubjectLinker({
     onLink,
 }) {
     const [sel, setSel] = React.useState({ teacherId: '', subjectId: '' });
+    const [modal, setModal] = React.useState({ isOpen: false, message: '' });
+
     const set = (k) => (e) => setSel((s) => ({ ...s, [k]: e.target.value }));
     const submit = async () => {
-        await onLink?.(sel);
+        if (!sel.teacherId || !sel.subjectId) {
+            setModal({ isOpen: true, message: 'Guru dan Mata Pelajaran wajib dipilih.' });
+            return;
+        }
+        const payload = {
+            teacher_id: Number(sel.teacherId),
+            subject_id: Number(sel.subjectId),
+        };
+        await onLink?.(payload);
         setSel({ teacherId: '', subjectId: '' });
     };
 
@@ -42,6 +53,15 @@ export default function TeacherSubjectLinker({
             <div className="actions">
                 <Button onClick={submit}>Tambah Relasi</Button>
             </div>
+            <ConfirmModal
+                open={modal.isOpen}
+                title="Validasi Input"
+                onClose={() => setModal({ isOpen: false, message: '' })}
+                onConfirm={() => setModal({ isOpen: false, message: '' })}
+                confirmText="OK"
+            >
+                {modal.message}
+            </ConfirmModal>
         </Card>
     );
 }

@@ -16,54 +16,73 @@ export default function MasterDataPage() {
         { id: '3', type: 'Mapel', name: 'Matematika', detail: 'Kode: MTK' },
     ];
 
+    const [academicYears, setAcademicYears] = React.useState([]);
+    const [teachers, setTeachers] = React.useState([]);
+    const [subjects, setSubjects] = React.useState([]);
+
+    React.useEffect(() => {
+        AdminApi.getAcademicYears().then(res => {
+            if (res.ok) {
+                setAcademicYears(res.data);
+            }
+        });
+        AdminApi.getUsers({ role: 'teacher' }).then(res => {
+            if (res.ok) {
+                setTeachers(res.data.map(t => ({ id: t.id, name: t.full_name })));
+            }
+        });
+        AdminApi.getSubjects().then(res => {
+            if (res.ok) {
+                setSubjects(res.data);
+            }
+        });
+    }, []);
+
     return (
         <div className="grid cols-2">
             <AcademicYearForm />
 
             <SemesterForm
+                academicYears={academicYears}
                 onSubmit={async (p) => {
-                    /* await AdminApi.createSemester(p);  */ alert(
+                    await AdminApi.createSemester(p);  
+                    alert(
                         'Semester ditambah',
                     );
                 }}
             />
             <ClassForm
-                teachers={[
-                    { id: 1, name: 'Bu Sari' },
-                    { id: 2, name: 'Pak Budi' },
-                ]}
+                teachers={teachers}
                 onSubmit={async (p) => {
-                    /* await AdminApi.createClass(p); */ alert(
+                    await AdminApi.createClass(p);
+                    alert(
                         'Kelas ditambah',
                     );
                 }}
             />
             <UserForm />
             <TeacherSubjectLinker
-                teachers={[
-                    { id: 1, name: 'Pak Budi' },
-                    { id: 2, name: 'Bu Sari' },
-                ]}
-                subjects={[
-                    { id: 10, name: 'Matematika' },
-                    { id: 11, name: 'Bahasa Indonesia' },
-                ]}
+                teachers={teachers}
+                subjects={subjects}
                 onLink={async (p) => {
-                    /* await AdminApi.linkTeacherSubject(p); */ alert(
+                    await AdminApi.linkTeacherSubject(p);
+                    alert(
                         'Relasi ditambah',
                     );
                 }}
             />
             <SubjectForm
                 onCreate={async (p) => {
-                    /* await AdminApi.createSubject(p); */ alert(
+                    await AdminApi.createSubject(p);
+                    alert(
                         'Mapel ditambah',
                     );
                 }}
             />
             <RoomForm
                 onCreate={async (p) => {
-                    /* await AdminApi.createRoom(p);    */ alert(
+                    await AdminApi.createRoom(p);
+                    alert(
                         'Ruang ditambah',
                     );
                 }}

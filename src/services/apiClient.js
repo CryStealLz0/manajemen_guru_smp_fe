@@ -67,6 +67,8 @@ export const AdminApi = {
 // === Teacher endpoints ===
 export const TeacherApi = {
   mySchedule: (semesterId, day) =>
-    api.get('/teacher/me/schedule', { params: { semesterId, day } }),
+    api.get('/timetables/teachers/me/daily', {
+      params: { semester_id: semesterId, day_of_week: day },
+    }),
   myProfile: () => api.get('/teacher/me', { allow401: true }),
 };

@@ -5,6 +5,7 @@ import { Button } from '../../../components/ui/Button';
 
 import UsersSection from './sections/UsersSection';
 import AcademicYearSection from './sections/AcademicYearSection';
+import TeacherSubjectSection from './sections/TeacherSubjectSection';
 
 export default function MonitoringDataPage() {
   const [tab, setTab] = React.useState('users');
@@ -24,6 +25,12 @@ export default function MonitoringDataPage() {
         >
           Academic Years
         </Button>
+        <Button
+          variant={tab === 'teacherSubjects' ? 'default' : 'ghost'}
+          onClick={() => setTab('teacherSubjects')}
+        >
+          Teacher Subjects
+        </Button>
       </div>
 
       {tab === 'users' && (
@@ -35,6 +42,12 @@ export default function MonitoringDataPage() {
       {tab === 'years' && (
         <Card title="Monitoring Data — Academic Years">
           <AcademicYearSection />
+        </Card>
+      )}
+
+      {tab === 'teacherSubjects' && (
+        <Card title="Monitoring Data — Teacher Subjects">
+          <TeacherSubjectSection />
         </Card>
       )}
     </div>
